@@ -1,9 +1,16 @@
 import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import log from 'electron-log'
+import { initDb } from '../services/db'
 import { createFloatingWindow } from './floatingWindow'
 import { createSettingsWindow, getSettingsWindow } from './settingsWindow'
 import { createTray } from './tray'
+import { registerPortfolioHandlers } from './ipc/portfolio'
+import { registerWatchlistHandlers } from './ipc/watchlist'
+import { registerAlertHandlers } from './ipc/alerts'
+import { registerNewsHandlers } from './ipc/news'
+import { registerRecommendationHandlers } from './ipc/recommendations'
+import { registerSettingsHandlers } from './ipc/settings'
 
 log.initialize()
 log.info('Ticker starting up')
@@ -17,11 +24,23 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  // Initialize SQLite database
+  initDb(app.getPath('userData'))
+
+  // Register all IPC handlers
+  registerPortfolioHandlers()
+  registerWatchlistHandlers()
+  registerAlertHandlers()
+  registerNewsHandlers()
+  registerRecommendationHandlers()
+  registerSettingsHandlers()
+
+  ipcMain.handle('window:openSettings', () => createSettingsWindow())
+
   if (is.dev) {
     try {
-      const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import(
-        'electron-devtools-installer'
-      )
+      const { default: installExtension, REACT_DEVELOPER_TOOLS } =
+        await import('electron-devtools-installer')
       await installExtension(REACT_DEVELOPER_TOOLS)
       log.info('React DevTools installed')
     } catch (e) {
@@ -31,10 +50,6 @@ app.whenReady().then(async () => {
 
   floatingWindow = createFloatingWindow()
   createTray(floatingWindow)
-
-  ipcMain.handle('window:openSettings', () => {
-    createSettingsWindow()
-  })
 
   nativeTheme.on('updated', () => {
     const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
