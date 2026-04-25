@@ -15,6 +15,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "test": "vitest",
     "prepare": "husky",
+    "postinstall": "electron-rebuild -f -w better-sqlite3",
     "commit": "git cz",
     "release": "release-it"
   },
@@ -31,9 +32,10 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "@electron/rebuild": "^4.0.4",
+    "@eslint/js": "^9.0.0",
     "@release-it/conventional-changelog": "^11.0.0",
     "@tailwindcss/vite": "^4.2.4",
     "@testing-library/jest-dom": "^6.6.3",
