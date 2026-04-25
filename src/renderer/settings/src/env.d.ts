@@ -19,7 +19,12 @@ declare global {
       }
       alerts: {
         getAll: () => Promise<unknown>
-        create: (ticker: string, type: string, value: number, persistent: boolean) => Promise<unknown>
+        create: (
+          ticker: string,
+          type: string,
+          value: number,
+          persistent: boolean
+        ) => Promise<unknown>
         delete: (id: number) => Promise<void>
         toggle: (id: number, active: boolean) => Promise<void>
         getHistory: () => Promise<unknown>
@@ -35,6 +40,9 @@ declare global {
       settings: {
         get: () => Promise<unknown>
         set: (settings: Record<string, unknown>) => Promise<void>
+      }
+      ticker: {
+        lookup: (ticker: string) => Promise<{ ticker: string; name: string; valid: boolean }>
       }
     }
   }

@@ -11,6 +11,7 @@ import { registerAlertHandlers } from './ipc/alerts'
 import { registerNewsHandlers } from './ipc/news'
 import { registerRecommendationHandlers } from './ipc/recommendations'
 import { registerSettingsHandlers } from './ipc/settings'
+import { registerTickerHandlers } from './ipc/ticker'
 
 log.initialize()
 log.info('Ticker starting up')
@@ -34,6 +35,7 @@ app.whenReady().then(async () => {
   registerNewsHandlers()
   registerRecommendationHandlers()
   registerSettingsHandlers()
+  registerTickerHandlers()
 
   ipcMain.handle('window:openSettings', () => createSettingsWindow())
 

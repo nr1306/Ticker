@@ -19,11 +19,21 @@ export default [
         ecmaFeatures: { jsx: true }
       },
       globals: {
+        // Node globals (main + preload)
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        // Browser globals (renderer)
         window: 'readonly',
         document: 'readonly',
         console: 'readonly',
-        process: 'readonly',
-        __dirname: 'readonly'
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly'
       }
     },
     plugins: {

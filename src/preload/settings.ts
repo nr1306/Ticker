@@ -49,5 +49,9 @@ contextBridge.exposeInMainWorld('api', {
   settings: {
     get: () => ipcRenderer.invoke('settings:get'),
     set: (settings: Record<string, unknown>) => ipcRenderer.invoke('settings:set', settings)
+  },
+
+  ticker: {
+    lookup: (ticker: string) => ipcRenderer.invoke('ticker:lookup', ticker)
   }
 })
