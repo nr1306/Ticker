@@ -6,7 +6,7 @@ import log from 'electron-log'
 export function createFloatingWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 300,
-    height: 80,
+    height: 500,
     frame: false,
     transparent: true,
     alwaysOnTop: true,

@@ -186,87 +186,83 @@ export default function Portfolio() {
         </div>
       ) : (
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-[760px] w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest w-28">
-                    Ticker
-                  </th>
-                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                    Company
-                  </th>
-                  <th className="text-right px-6 py-3.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest w-32">
-                    Shares
-                  </th>
-                  <th className="text-right px-6 py-3.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest w-32">
-                    Price
-                  </th>
-                  <th className="text-right px-6 py-3.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest w-32">
-                    Change
-                  </th>
-                  <th className="text-right px-6 py-3.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest w-36">
-                    Value
-                  </th>
-                  <th className="w-16" />
-                </tr>
-              </thead>
-              <tbody>
-                {stocks.map((stock, i) => (
-                  <tr
-                    key={stock.ticker}
-                    className={`${i < stocks.length - 1 ? 'border-b border-zinc-100 dark:border-zinc-800' : ''} hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors`}
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                <th className="text-left px-4 py-3 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider w-20">
+                  Ticker
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                  Company
+                </th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider w-16">
+                  Shares
+                </th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider w-24">
+                  Price
+                </th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider w-24">
+                  Change
+                </th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider w-24">
+                  Value
+                </th>
+                <th className="w-10" />
+              </tr>
+            </thead>
+            <tbody>
+              {stocks.map((stock, i) => (
+                <tr
+                  key={stock.ticker}
+                  className={`${i < stocks.length - 1 ? 'border-b border-zinc-100 dark:border-zinc-800' : ''} hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors`}
+                >
+                  <td className="px-4 py-3 font-mono font-semibold text-zinc-800 dark:text-zinc-100 tracking-wide">
+                    {stock.ticker}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">{stock.name}</td>
+                  <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-300 tabular-nums">
+                    {quantityFormatter.format(stock.quantity)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-300 tabular-nums">
+                    {stock.price === null ? (
+                      <span className="text-zinc-400 dark:text-zinc-500">--</span>
+                    ) : (
+                      currencyFormatter.format(stock.price)
+                    )}
+                  </td>
+                  <td
+                    className={`px-4 py-3 text-right tabular-nums ${
+                      stock.changePercent === null
+                        ? 'text-zinc-400 dark:text-zinc-500'
+                        : stock.changePercent > 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : stock.changePercent < 0
+                            ? 'text-red-500 dark:text-red-400'
+                            : 'text-zinc-500 dark:text-zinc-400'
+                    }`}
                   >
-                    <td className="px-6 py-4 font-mono font-semibold text-zinc-800 dark:text-zinc-100 tracking-wide">
-                      {stock.ticker}
-                    </td>
-                    <td className="px-6 py-4 text-zinc-600 dark:text-zinc-300">{stock.name}</td>
-                    <td className="px-6 py-4 text-right text-zinc-600 dark:text-zinc-300 tabular-nums">
-                      {quantityFormatter.format(stock.quantity)}
-                    </td>
-                    <td className="px-6 py-4 text-right text-zinc-600 dark:text-zinc-300 tabular-nums">
-                      {stock.price === null ? (
-                        <span className="text-zinc-400 dark:text-zinc-500">--</span>
-                      ) : (
-                        currencyFormatter.format(stock.price)
-                      )}
-                    </td>
-                    <td
-                      className={`px-6 py-4 text-right tabular-nums ${
-                        stock.changePercent === null
-                          ? 'text-zinc-400 dark:text-zinc-500'
-                          : stock.changePercent > 0
-                            ? 'text-emerald-600 dark:text-emerald-400'
-                            : stock.changePercent < 0
-                              ? 'text-red-500 dark:text-red-400'
-                              : 'text-zinc-500 dark:text-zinc-400'
-                      }`}
+                    {stock.changePercent === null ? '--' : formatSignedPercent(stock.changePercent)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-300 tabular-nums">
+                    {stock.price === null ? (
+                      <span className="text-zinc-400 dark:text-zinc-500">--</span>
+                    ) : (
+                      currencyFormatter.format(stock.price * stock.quantity)
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      onClick={() => remove(stock.ticker)}
+                      className="text-zinc-300 dark:text-zinc-600 hover:text-red-400 dark:hover:text-red-400 transition-colors text-lg leading-none"
+                      title={`Remove ${stock.ticker}`}
                     >
-                      {stock.changePercent === null
-                        ? '--'
-                        : formatSignedPercent(stock.changePercent)}
-                    </td>
-                    <td className="px-6 py-4 text-right text-zinc-600 dark:text-zinc-300 tabular-nums">
-                      {stock.price === null ? (
-                        <span className="text-zinc-400 dark:text-zinc-500">--</span>
-                      ) : (
-                        currencyFormatter.format(stock.price * stock.quantity)
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button
-                        onClick={() => remove(stock.ticker)}
-                        className="text-zinc-300 dark:text-zinc-600 hover:text-red-400 dark:hover:text-red-400 transition-colors text-lg leading-none"
-                        title={`Remove ${stock.ticker}`}
-                      >
-                        ×
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      ×
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           <div className="px-6 py-3.5 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
             <p className="text-xs text-zinc-400 dark:text-zinc-500">
               {stocks.length} {stocks.length === 1 ? 'stock' : 'stocks'} in portfolio

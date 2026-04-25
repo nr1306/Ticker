@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron'
+import axios from 'axios'
 import log from 'electron-log'
 
 interface TickerLookupResult {
@@ -7,17 +8,17 @@ interface TickerLookupResult {
   valid: boolean
 }
 
-// yahoo-finance2 is ESM-only — load once via dynamic import in CJS context
-type YahooFinance = InstanceType<typeof import('yahoo-finance2').default>
+interface YFSearchQuote {
+  symbol: string
+  longname?: string
+  shortname?: string
+  quoteType?: string
+}
 
-let _yf: YahooFinance | null = null
-
-async function getYF(): Promise<YahooFinance> {
-  if (!_yf) {
-    const YahooFinance = (await import('yahoo-finance2')).default
-    _yf = new YahooFinance()
-  }
-  return _yf
+const HEADERS = {
+  'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  Accept: 'application/json'
 }
 
 export function registerTickerHandlers(): void {
@@ -26,17 +27,31 @@ export function registerTickerHandlers(): void {
     if (!upper) return { ticker: upper, name: '', valid: false }
 
     try {
-      const yf = await getYF()
-      const result = await yf.quote(upper)
-      const name = result.longName ?? result.shortName ?? upper
-      const valid =
-        result.regularMarketPrice != null || result.longName != null || result.shortName != null
+      const { data } = await axios.get('https://query1.finance.yahoo.com/v1/finance/search', {
+        params: {
+          q: upper,
+          quotesCount: 5,
+          newsCount: 0,
+          enableFuzzyQuery: false
+        },
+        headers: HEADERS,
+        timeout: 6000
+      })
 
-      return {
-        ticker: upper,
-        name: valid ? name : '',
-        valid
+      const quotes: YFSearchQuote[] = data?.quotes ?? []
+
+      // Find exact symbol match first, then fall back to first result
+      const match =
+        quotes.find((q) => q.symbol === upper && q.quoteType === 'EQUITY') ??
+        quotes.find((q) => q.symbol === upper) ??
+        quotes.find((q) => q.quoteType === 'EQUITY')
+
+      if (!match) {
+        return { ticker: upper, name: '', valid: false }
       }
+
+      const name = match.longname ?? match.shortname ?? upper
+      return { ticker: upper, name, valid: true }
     } catch (e) {
       log.warn(`ticker:lookup failed for ${upper}:`, e)
       return { ticker: upper, name: '', valid: false }
