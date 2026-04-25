@@ -6,14 +6,15 @@ import {
   setWatchlistTarget
 } from '../../services/db'
 import type { WatchlistStock } from '../../shared/types'
+import { getLatestPriceUpdate } from '../pricePoller'
 
 export function registerWatchlistHandlers(): void {
   ipcMain.handle('watchlist:getAll', (): WatchlistStock[] =>
     getWatchlist().map((row) => ({
       ticker: row.ticker,
       name: row.name,
-      price: 0,
-      changePercent: 0,
+      price: getLatestPriceUpdate(row.ticker)?.price ?? null,
+      changePercent: getLatestPriceUpdate(row.ticker)?.changePercent ?? null,
       targetPrice: row.target_price,
       atTarget: false
     }))

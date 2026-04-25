@@ -1,15 +1,27 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import type { Alert, NewsItem, PriceUpdate, Recommendation } from '../shared/types'
 
 contextBridge.exposeInMainWorld('electron', electronAPI)
 
+function subscribe<T>(channel: string, cb: (data: T) => void): () => void {
+  const listener = (_event: unknown, data: T) => cb(data)
+  ipcRenderer.on(channel, listener)
+  return () => {
+    ipcRenderer.removeListener(channel, listener)
+  }
+}
+
 contextBridge.exposeInMainWorld('api', {
-  onThemeChange: (cb: (theme: 'dark' | 'light') => void) =>
-    ipcRenderer.on('theme:change', (_e, theme) => cb(theme)),
-  onRecommendationsReady: (cb: (data: unknown) => void) =>
-    ipcRenderer.on('recommendations:ready', (_e, data) => cb(data)),
-  onNewsUpdate: (cb: (data: unknown) => void) =>
-    ipcRenderer.on('news:update', (_e, data) => cb(data)),
+  onThemeChange: (cb: (theme: 'dark' | 'light') => void) => subscribe('theme:change', cb),
+  onPricesUpdate: (cb: (data: PriceUpdate[]) => void) => subscribe('prices:update', cb),
+  onUnreadCount: (cb: (count: number) => void) => subscribe('unread:count', cb),
+  onAlertTriggered: (cb: (data: { alert: Alert; priceAtTrigger: number }) => void) =>
+    subscribe('alert:triggered', cb),
+  onRecommendationsReady: (cb: (data: Recommendation[]) => void) =>
+    subscribe('recommendations:ready', cb),
+  onNewsUpdate: (cb: (data: NewsItem[]) => void) => subscribe('news:update', cb),
+  openSettings: () => ipcRenderer.invoke('window:openSettings'),
 
   portfolio: {
     getAll: () => ipcRenderer.invoke('portfolio:getAll'),

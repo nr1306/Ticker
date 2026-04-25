@@ -12,6 +12,7 @@ import { registerNewsHandlers } from './ipc/news'
 import { registerRecommendationHandlers } from './ipc/recommendations'
 import { registerSettingsHandlers } from './ipc/settings'
 import { registerTickerHandlers } from './ipc/ticker'
+import { startPricePoller, stopPricePoller } from './pricePoller'
 
 log.initialize()
 log.info('Ticker starting up')
@@ -37,7 +38,9 @@ app.whenReady().then(async () => {
   registerSettingsHandlers()
   registerTickerHandlers()
 
-  ipcMain.handle('window:openSettings', () => createSettingsWindow())
+  ipcMain.handle('window:openSettings', () => {
+    createSettingsWindow()
+  })
 
   if (is.dev) {
     try {
@@ -52,6 +55,7 @@ app.whenReady().then(async () => {
 
   floatingWindow = createFloatingWindow()
   createTray(floatingWindow)
+  startPricePoller(floatingWindow)
 
   nativeTheme.on('updated', () => {
     const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
@@ -63,8 +67,13 @@ app.whenReady().then(async () => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       floatingWindow = createFloatingWindow()
+      startPricePoller(floatingWindow)
     }
   })
+})
+
+app.on('before-quit', () => {
+  stopPricePoller()
 })
 
 app.on('window-all-closed', () => {

@@ -6,13 +6,14 @@ import {
   updatePortfolioQuantity
 } from '../../services/db'
 import type { PortfolioStock } from '../../shared/types'
+import { getLatestPriceUpdate } from '../pricePoller'
 
 export function registerPortfolioHandlers(): void {
   ipcMain.handle('portfolio:getAll', (): PortfolioStock[] =>
     getPortfolio().map((row) => ({
       ...row,
-      price: 0,
-      changePercent: 0
+      price: getLatestPriceUpdate(row.ticker)?.price ?? null,
+      changePercent: getLatestPriceUpdate(row.ticker)?.changePercent ?? null
     }))
   )
 

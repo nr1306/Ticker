@@ -2,15 +2,15 @@ export interface PortfolioStock {
   ticker: string
   name: string
   quantity: number
-  price: number
-  changePercent: number
+  price: number | null
+  changePercent: number | null
 }
 
 export interface WatchlistStock {
   ticker: string
   name: string
-  price: number
-  changePercent: number
+  price: number | null
+  changePercent: number | null
   targetPrice: number | null
   atTarget: boolean
 }
