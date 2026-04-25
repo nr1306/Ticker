@@ -1,0 +1,81 @@
+{
+  "name": "ticker",
+  "version": "0.1.0",
+  "description": "Ambient stock companion for working professionals",
+  "main": "./out/main/index.js",
+  "author": "neshrochwani",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "lint": "eslint src",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "test": "vitest",
+    "prepare": "husky",
+    "commit": "git cz",
+    "release": "release-it"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "axios": "^1.7.9",
+    "better-sqlite3": "^12.9.0",
+    "electron-log": "^5.2.4",
+    "openai": "^4.77.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "yahoo-finance2": "^2.13.3",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@release-it/conventional-changelog": "^11.0.0",
+    "@tailwindcss/vite": "^4.2.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "electron": "^41.3.0",
+    "electron-devtools-installer": "^4.0.0",
+    "electron-vite": "6.0.0-beta.1",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "msw": "^2.7.0",
+    "prettier": "^3.4.2",
+    "release-it": "^20.0.1",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html}": [
+      "prettier --write"
+    ]
+  }
+}
