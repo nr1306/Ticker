@@ -6,7 +6,7 @@ A lightweight, ambient desktop application for working professionals who activel
 
 ---
 
-## Current Version: v0.5.0
+## Current Version: v0.7.0
 
 ### Build Progress
 
@@ -17,8 +17,8 @@ A lightweight, ambient desktop application for working professionals who activel
 | v0.3.0  | SQLite schema, full CRUD service, IPC handler layer            | ✅ Done                                    |
 | v0.4.0  | Portfolio management UI with ticker lookup                     | ✅ Done (UI spacing polish pending commit) |
 | v0.5.0  | Live price polling (yahoo-finance2 + pricePoller)              | ✅ Done                                    |
-| v0.6.0  | Live floating widget with prices + % change                    | ⏳ Pending                                 |
-| v0.7.0  | Watchlist                                                      | ⏳ Pending                                 |
+| v0.6.0  | Live floating widget with prices + % change                    | ✅ Done                                    |
+| v0.7.0  | Watchlist                                                      | ✅ Done                                    |
 | v0.8.0  | Smart price alerts + system notifications                      | ⏳ Pending                                 |
 | v0.9.0  | News Pulse (NewsAPI)                                           | ⏳ Pending                                 |
 | v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                 |
@@ -83,10 +83,11 @@ ticker/
 │   │           ├── index.css
 │   │           ├── env.d.ts            # window.api types for settings
 │   │           ├── stores/
-│   │           │   └── portfolioStore.ts   # Zustand: fetch/add/remove via IPC
+│   │           │   ├── portfolioStore.ts   # Zustand: fetch/add/remove via IPC
+│   │           │   └── watchlistStore.ts   # Zustand: fetch/add/remove/setTarget + price updates
 │   │           └── tabs/
 │   │               ├── Portfolio.tsx   # Full UI: add form, ticker lookup, stocks table
-│   │               ├── Watchlist.tsx   # Placeholder (v0.7.0)
+│   │               ├── Watchlist.tsx   # Full UI: add form, ticker lookup, live prices, target price editing
 │   │               ├── Alerts.tsx      # Placeholder (v0.8.0)
 │   │               ├── News.tsx        # Placeholder (v0.9.0)
 │   │               ├── Recommendations.tsx # Placeholder (v1.1.0)
@@ -340,3 +341,14 @@ npm run release       # release-it — bumps version, generates CHANGELOG, tags
 - No comments unless the WHY is non-obvious
 - Tailwind `dark:` variants on all color classes — no hardcoded colors
 - Commit subjects must be lowercase (commitlint enforces)
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
