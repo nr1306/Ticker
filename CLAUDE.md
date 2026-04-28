@@ -6,7 +6,7 @@ A lightweight, ambient desktop application for working professionals who activel
 
 ---
 
-## Current Version: v0.7.0
+## Current Version: v0.8.0
 
 ### Build Progress
 
@@ -19,7 +19,7 @@ A lightweight, ambient desktop application for working professionals who activel
 | v0.5.0  | Live price polling (yahoo-finance2 + pricePoller)              | ✅ Done                                    |
 | v0.6.0  | Live floating widget with prices + % change                    | ✅ Done                                    |
 | v0.7.0  | Watchlist                                                      | ✅ Done                                    |
-| v0.8.0  | Smart price alerts + system notifications                      | ⏳ Pending                                 |
+| v0.8.0  | Smart price alerts + system notifications                      | ✅ Done                                    |
 | v0.9.0  | News Pulse (NewsAPI)                                           | ⏳ Pending                                 |
 | v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                 |
 | v1.1.0  | AI stock recommendations (GPT-4o)                              | ⏳ Pending                                 |
