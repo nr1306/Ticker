@@ -51,6 +51,9 @@ export const useAlertsStore = create<AlertsStore>((set) => ({
     set((state) => ({
       alerts: state.alerts.map((a) => (a.id === alert.id ? { ...a, active: alert.active } : a))
     }))
-    window.api.alerts.getHistory().then((data) => set({ history: data }))
+    window.api.alerts
+      .getHistory()
+      .then((data) => set({ history: data }))
+      .catch(() => {})
   }
 }))
