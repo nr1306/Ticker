@@ -7,6 +7,7 @@ import Recommendations from './tabs/Recommendations'
 import SettingsTab from './tabs/SettingsTab'
 import { usePortfolioStore } from './stores/portfolioStore'
 import { useWatchlistStore } from './stores/watchlistStore'
+import { useAlertsStore } from './stores/alertsStore'
 
 const TABS = ['Portfolio', 'Watchlist', 'Alerts', 'News', 'Recommendations', 'Settings'] as const
 type Tab = (typeof TABS)[number]
@@ -41,6 +42,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('Portfolio')
   const applyToPortfolio = usePortfolioStore((s) => s.applyPriceUpdates)
   const applyToWatchlist = useWatchlistStore((s) => s.applyPriceUpdates)
+  const applyTriggered = useAlertsStore((s) => s.applyTriggered)
 
   useEffect(
     () =>
@@ -51,6 +53,8 @@ export default function App() {
     [applyToPortfolio, applyToWatchlist]
   )
 
+  useEffect(() => window.api.onAlertTriggered(applyTriggered), [applyTriggered])
+
   return (
     <div className="flex h-screen bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 overflow-hidden">
       {/* Sidebar — wider and more spacious */}
@@ -59,7 +63,7 @@ export default function App() {
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base font-bold text-zinc-800 dark:text-zinc-100">Ticker</span>
             <span className="text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded font-mono">
-              v0.7.0
+              v0.8.0
             </span>
           </div>
           <p className="text-xs text-zinc-400 dark:text-zinc-500">Stock Companion</p>
