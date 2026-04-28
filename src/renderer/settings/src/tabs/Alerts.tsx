@@ -35,13 +35,8 @@ export default function Alerts() {
   }, [fetch, fetchHistory])
 
   useEffect(() => {
-    if (availableTickers.length > 0 && !ticker) {
-      setTicker(availableTickers[0])
-    }
-  }, [availableTickers, ticker])
-
-  useEffect(() => {
-    if (ticker && availableTickers.length > 0 && !availableTickers.includes(ticker)) {
+    if (availableTickers.length === 0) return
+    if (!ticker || !availableTickers.includes(ticker)) {
       setTicker(availableTickers[0])
     }
   }, [availableTickers, ticker])
