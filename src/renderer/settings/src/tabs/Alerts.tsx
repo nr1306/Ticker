@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAlertsStore } from '../stores/alertsStore'
 import { usePortfolioStore } from '../stores/portfolioStore'
 import { useWatchlistStore } from '../stores/watchlistStore'
@@ -9,9 +9,16 @@ export default function Alerts() {
   const portfolioStocks = usePortfolioStore((s) => s.stocks)
   const watchlistStocks = useWatchlistStore((s) => s.stocks)
 
-  const availableTickers = [
-    ...new Set([...portfolioStocks.map((s) => s.ticker), ...watchlistStocks.map((s) => s.ticker)])
-  ].sort()
+  const availableTickers = useMemo(
+    () =>
+      [
+        ...new Set([
+          ...portfolioStocks.map((s) => s.ticker),
+          ...watchlistStocks.map((s) => s.ticker)
+        ])
+      ].sort(),
+    [portfolioStocks, watchlistStocks]
+  )
 
   const [ticker, setTicker] = useState('')
   const [type, setType] = useState<AlertType>('floor')
@@ -23,6 +30,8 @@ export default function Alerts() {
   useEffect(() => {
     fetch()
     fetchHistory()
+    if (portfolioStocks.length === 0) usePortfolioStore.getState().fetch()
+    if (watchlistStocks.length === 0) useWatchlistStore.getState().fetch()
   }, [fetch, fetchHistory])
 
   useEffect(() => {
@@ -31,14 +40,23 @@ export default function Alerts() {
     }
   }, [availableTickers, ticker])
 
+  useEffect(() => {
+    if (ticker && availableTickers.length > 0 && !availableTickers.includes(ticker)) {
+      setTicker(availableTickers[0])
+    }
+  }, [availableTickers, ticker])
+
   const handleAdd = async () => {
     const numValue = parseFloat(value)
     if (!ticker || isNaN(numValue) || numValue <= 0) return
     setAdding(true)
-    await add(ticker, type, numValue, persistent)
-    setValue('')
-    setPersistent(false)
-    setAdding(false)
+    try {
+      await add(ticker, type, numValue, persistent)
+      setValue('')
+      setPersistent(false)
+    } finally {
+      setAdding(false)
+    }
   }
 
   const valueLabel = type === 'percent' ? '% threshold' : 'Price ($)'
@@ -121,7 +139,13 @@ export default function Alerts() {
                 </label>
                 <button
                   onClick={handleAdd}
-                  disabled={adding || !ticker || !value || parseFloat(value) <= 0}
+                  disabled={
+                    adding ||
+                    !ticker ||
+                    !value ||
+                    isNaN(parseFloat(value)) ||
+                    parseFloat(value) <= 0
+                  }
                   className="flex-1 text-sm bg-zinc-800 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-2 rounded-md font-medium disabled:opacity-40 hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors"
                 >
                   {adding ? 'Adding...' : 'Add Alert'}
