@@ -53,19 +53,20 @@ export function evaluateAlerts(prices: PriceUpdate[], windows: BrowserWindow[]):
       if (alert.persistent) triggeredAlerts.add(alert.id)
 
       try {
-        new Notification({
-          title: `Alert: ${alert.ticker}`,
-          body: buildBody(alert, update.price, update.changePercent)
-        }).show()
-
         if (!alert.persistent) {
-          // Atomic: log history + deactivate in one transaction
+          // Atomic: log history + deactivate in one transaction before showing notification.
+          // DB-first ensures a failed write produces a missed notification, not a duplicate.
           triggerAndDeactivateAlert(alert.id, alert.ticker, update.price)
           // Mutate before spread so renderer receives the post-deactivation state
           alert.active = false
         } else {
           logAlertTrigger(alert.id, alert.ticker, update.price)
         }
+
+        new Notification({
+          title: `Alert: ${alert.ticker}`,
+          body: buildBody(alert, update.price, update.changePercent)
+        }).show()
 
         const payload = { alert: { ...alert }, priceAtTrigger: update.price }
         for (const win of windows) {
