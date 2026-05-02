@@ -260,6 +260,31 @@ export function getAlertHistory(): AlertHistoryEntry[] {
   }))
 }
 
+export function triggerAndDeactivateAlert(
+  alertId: number,
+  ticker: string,
+  priceAtTrigger: number
+): AlertHistoryEntry {
+  const triggeredAt = new Date().toISOString()
+  const run = getDb().transaction(() => {
+    const result = getDb()
+      .prepare(
+        'INSERT INTO alert_history (alert_id, ticker, triggered_at, price_at_trigger) VALUES (?, ?, ?, ?)'
+      )
+      .run(alertId, ticker, triggeredAt, priceAtTrigger)
+    getDb().prepare('UPDATE alerts SET active = 0 WHERE id = ?').run(alertId)
+    return result
+  })
+  const result = run() as { lastInsertRowid: number | bigint }
+  return {
+    id: result.lastInsertRowid as number,
+    alertId,
+    ticker,
+    triggeredAt,
+    priceAtTrigger
+  }
+}
+
 // ─── News ─────────────────────────────────────────────────────────────────────
 
 type NewsCacheInput = Omit<NewsItem, 'id' | 'summary' | 'read'>

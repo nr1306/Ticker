@@ -4,6 +4,7 @@ import { getPortfolio, getWatchlist, getSettings } from '../services/db'
 import type { PriceUpdate } from '../shared/types'
 import { fetchPrices } from '../services/stockApi'
 import { getSettingsWindow } from './settingsWindow'
+import { evaluateAlerts } from './alertEvaluator'
 
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 let consecutiveFailures = 0
@@ -57,6 +58,8 @@ async function runPoll(floatingWindow: BrowserWindow): Promise<void> {
     latestPrices = new Map(prices.map((update) => [update.ticker.toUpperCase(), update]))
 
     broadcastPriceUpdates(floatingWindow, prices)
+    const settingsWin = getSettingsWindow()
+    evaluateAlerts(prices, [floatingWindow, ...(settingsWin ? [settingsWin] : [])])
 
     consecutiveFailures = 0
     log.info(`Price poller: pushed ${prices.length} updates (${tickers.join(', ')})`)

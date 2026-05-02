@@ -10,22 +10,22 @@ A lightweight, ambient desktop application for working professionals who activel
 
 ### Build Progress
 
-| Version | Feature                                                        | Status                                         |
-| ------- | -------------------------------------------------------------- | ---------------------------------------------- |
-| v0.1.0  | Project scaffold — Electron + React + TypeScript + Tailwind v4 | ✅ Done                                        |
-| v0.2.0  | Two-window setup, collapsible widget, settings tab routing     | ✅ Done                                        |
-| v0.3.0  | SQLite schema, full CRUD service, IPC handler layer            | ✅ Done                                        |
-| v0.4.0  | Portfolio management UI with ticker lookup                     | ✅ Done (UI spacing polish pending commit)     |
-| v0.5.0  | Live price polling (yahoo-finance2 + pricePoller)              | ✅ Done                                        |
-| v0.6.0  | Live floating widget with prices + % change                    | ✅ Done                                        |
-| v0.7.0  | Watchlist                                                      | ✅ Done                                        |
-| v0.8.0  | Smart price alerts + system notifications                      | ✅ Done (on feat/alerts branch, pending merge) |
-| v0.9.0  | News Pulse (NewsAPI)                                           | ✅ Done                                        |
-| v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                     |
-| v1.1.0  | AI stock recommendations (GPT-4o)                              | ⏳ Pending                                     |
-| v1.2.0  | CSV portfolio import                                           | ⏳ Pending                                     |
-| v1.3.0  | Settings + preferences UI                                      | ⏳ Pending                                     |
-| v1.4.0  | Packaging + distribution                                       | ⏳ Pending                                     |
+| Version | Feature                                                        | Status                                     |
+| ------- | -------------------------------------------------------------- | ------------------------------------------ |
+| v0.1.0  | Project scaffold — Electron + React + TypeScript + Tailwind v4 | ✅ Done                                    |
+| v0.2.0  | Two-window setup, collapsible widget, settings tab routing     | ✅ Done                                    |
+| v0.3.0  | SQLite schema, full CRUD service, IPC handler layer            | ✅ Done                                    |
+| v0.4.0  | Portfolio management UI with ticker lookup                     | ✅ Done (UI spacing polish pending commit) |
+| v0.5.0  | Live price polling (yahoo-finance2 + pricePoller)              | ✅ Done                                    |
+| v0.6.0  | Live floating widget with prices + % change                    | ✅ Done                                    |
+| v0.7.0  | Watchlist                                                      | ✅ Done                                    |
+| v0.8.0  | Smart price alerts + system notifications                      | ✅ Done                                    |
+| v0.9.0  | News Pulse (NewsAPI)                                           | ✅ Done                                    |
+| v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                 |
+| v1.1.0  | AI stock recommendations (GPT-4o)                              | ⏳ Pending                                 |
+| v1.2.0  | CSV portfolio import                                           | ⏳ Pending                                 |
+| v1.3.0  | Settings + preferences UI                                      | ⏳ Pending                                 |
+| v1.4.0  | Packaging + distribution                                       | ⏳ Pending                                 |
 
 ---
 
