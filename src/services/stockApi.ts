@@ -24,7 +24,7 @@ async function fetchSinglePrice(ticker: string): Promise<PriceUpdate | null> {
     const { data } = await axios.get(`${YF_CHART_BASE}/${ticker}`, {
       params: { interval: '1d', range: '1d' },
       headers: HEADERS,
-      timeout: 8000
+      timeout: 15000
     })
 
     const meta: YFChartMeta | undefined = data?.chart?.result?.[0]?.meta
@@ -50,6 +50,9 @@ async function fetchSinglePrice(ticker: string): Promise<PriceUpdate | null> {
 export async function fetchPrices(tickers: string[]): Promise<PriceUpdate[]> {
   if (tickers.length === 0) return []
 
-  const results = await Promise.all(tickers.map(fetchSinglePrice))
+  const results: (PriceUpdate | null)[] = []
+  for (const ticker of tickers) {
+    results.push(await fetchSinglePrice(ticker))
+  }
   return results.filter((r): r is PriceUpdate => r !== null)
 }
