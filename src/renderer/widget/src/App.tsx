@@ -101,13 +101,13 @@ export default function App() {
   return (
     <div
       style={{ opacity: hovered ? 1 : 0.4 }}
-      className="transition-opacity duration-200 w-[300px]"
+      className="transition-opacity duration-200 w-full h-screen"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg overflow-hidden">
+      <div className="relative rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg overflow-hidden h-full flex flex-col">
         {/* Header — drag region */}
-        <div className="drag-region flex items-center justify-between px-3 py-2 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="drag-region flex items-center justify-between px-3 py-2 border-b border-zinc-100 dark:border-zinc-800 shrink-0">
           <span className="text-[10px] font-semibold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase select-none">
             Ticker
           </span>
@@ -129,9 +129,9 @@ export default function App() {
           </div>
         </div>
 
-        {/* Body */}
+        {/* Body — scrollable */}
         {!collapsed && (
-          <div>
+          <div className="flex-1 overflow-y-auto min-h-0">
             {isEmpty ? (
               <div className="px-3 py-2.5">
                 <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
@@ -140,11 +140,9 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* Portfolio stocks */}
                 {hasPortfolio &&
                   portfolio.map((stock) => <StockRow key={stock.ticker} stock={stock} />)}
 
-                {/* Watchlist separator + stocks */}
                 {hasWatchlist && (
                   <>
                     <div className="flex items-center gap-2 px-3 py-1 bg-zinc-50/80 dark:bg-zinc-800/50 border-y border-zinc-100 dark:border-zinc-800">
@@ -161,6 +159,21 @@ export default function App() {
             )}
           </div>
         )}
+
+        {/* Resize grip — visual hint at bottom-right corner */}
+        <div className="absolute bottom-1 right-1.5 opacity-20 hover:opacity-50 transition-opacity cursor-se-resize pointer-events-auto">
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="currentColor"
+            className="text-zinc-400 dark:text-zinc-500"
+          >
+            <circle cx="8.5" cy="8.5" r="1.2" />
+            <circle cx="8.5" cy="5" r="1.2" />
+            <circle cx="5" cy="8.5" r="1.2" />
+          </svg>
+        </div>
       </div>
     </div>
   )

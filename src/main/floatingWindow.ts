@@ -2,16 +2,23 @@ import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import log from 'electron-log'
+import { getWidgetSize, saveWidgetSize } from '../services/db'
 
 export function createFloatingWindow(): BrowserWindow {
+  const { width: savedW, height: savedH } = getWidgetSize()
+
   const win = new BrowserWindow({
-    width: 300,
-    height: 500,
+    width: savedW,
+    height: savedH,
+    minWidth: 220,
+    maxWidth: 600,
+    minHeight: 80,
+    maxHeight: 900,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
     skipTaskbar: true,
-    resizable: false,
+    resizable: true,
     hasShadow: true,
     show: false,
     webPreferences: {
@@ -25,11 +32,22 @@ export function createFloatingWindow(): BrowserWindow {
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
 
   const { width } = screen.getPrimaryDisplay().workAreaSize
-  win.setPosition(width - 320, 20)
+  win.setPosition(width - savedW - 20, 20)
 
   win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
+  })
+
+  let resizeTimer: ReturnType<typeof setTimeout>
+  win.on('resize', () => {
+    clearTimeout(resizeTimer)
+    resizeTimer = setTimeout(() => {
+      if (!win.isDestroyed()) {
+        const [w, h] = win.getSize()
+        saveWidgetSize(w, h)
+      }
+    }, 500)
   })
 
   win.on('ready-to-show', () => win.show())
