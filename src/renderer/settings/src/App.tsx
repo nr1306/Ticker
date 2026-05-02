@@ -9,6 +9,7 @@ import { usePortfolioStore } from './stores/portfolioStore'
 import { useWatchlistStore } from './stores/watchlistStore'
 import { useNewsStore } from './stores/newsStore'
 import { useAlertsStore } from './stores/alertsStore'
+import { useRecommendationsStore } from './stores/recommendationsStore'
 
 const TABS = ['Portfolio', 'Watchlist', 'Alerts', 'News', 'Recommendations', 'Settings'] as const
 type Tab = (typeof TABS)[number]
@@ -45,6 +46,7 @@ export default function App() {
   const applyToWatchlist = useWatchlistStore((s) => s.applyPriceUpdates)
   const applyNewsUpdate = useNewsStore((s) => s.applyUpdate)
   const applyTriggered = useAlertsStore((s) => s.applyTriggered)
+  const applyRecsUpdate = useRecommendationsStore((s) => s.applyUpdate)
 
   useEffect(
     () =>
@@ -57,6 +59,7 @@ export default function App() {
 
   useEffect(() => window.api.onNewsUpdate(applyNewsUpdate), [applyNewsUpdate])
   useEffect(() => window.api.onAlertTriggered(applyTriggered), [applyTriggered])
+  useEffect(() => window.api.onRecommendationsReady(applyRecsUpdate), [applyRecsUpdate])
 
   return (
     <div className="flex h-screen bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 overflow-hidden">

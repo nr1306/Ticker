@@ -1,7 +1,11 @@
-import { ipcMain } from 'electron'
+import { ipcMain, BrowserWindow } from 'electron'
 import { getCachedRecommendations } from '../../services/db'
+import { generateAndBroadcastRecommendations } from '../recommendationsFetcher'
 
-export function registerRecommendationHandlers(): void {
-  // Returns cached recommendations — AI generation wired in v1.1.0
-  ipcMain.handle('recommendations:fetch', () => getCachedRecommendations())
+export function registerRecommendationHandlers(floatingWindow: BrowserWindow): void {
+  ipcMain.handle('recommendations:fetch', async () => {
+    return generateAndBroadcastRecommendations(floatingWindow)
+  })
+
+  ipcMain.handle('recommendations:getCached', () => getCachedRecommendations())
 }

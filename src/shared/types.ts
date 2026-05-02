@@ -49,6 +49,8 @@ export interface Recommendation {
   id: number
   ticker: string
   reasoning: string
+  confidence: 'High' | 'Medium' | 'Low'
+  category: 'holding' | 'discovery'
   generatedAt: string
 }
 

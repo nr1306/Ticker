@@ -76,6 +76,8 @@ function runMigrations(): void {
       id           INTEGER PRIMARY KEY AUTOINCREMENT,
       ticker       TEXT NOT NULL,
       reasoning    TEXT NOT NULL,
+      confidence   TEXT NOT NULL DEFAULT 'Medium',
+      category     TEXT NOT NULL DEFAULT 'holding',
       generated_at TEXT NOT NULL
     );
 
@@ -84,6 +86,22 @@ function runMigrations(): void {
       value TEXT NOT NULL
     );
   `)
+  // v1.1.0: add confidence + category to existing recommendations_cache tables
+  try {
+    getDb().exec(
+      "ALTER TABLE recommendations_cache ADD COLUMN confidence TEXT NOT NULL DEFAULT 'Medium'"
+    )
+  } catch {
+    /* column already exists */
+  }
+  try {
+    getDb().exec(
+      "ALTER TABLE recommendations_cache ADD COLUMN category TEXT NOT NULL DEFAULT 'holding'"
+    )
+  } catch {
+    /* column already exists */
+  }
+
   log.info('Schema migrations complete')
 }
 
@@ -339,23 +357,40 @@ export function clearOldNews(olderThanDays = 7): void {
 // ─── Recommendations ──────────────────────────────────────────────────────────
 
 export function getCachedRecommendations(): Recommendation[] {
-  return getDb()
-    .prepare('SELECT id, ticker, reasoning, generated_at FROM recommendations_cache ORDER BY id')
+  const rows = getDb()
+    .prepare(
+      'SELECT id, ticker, reasoning, confidence, category, generated_at AS generatedAt FROM recommendations_cache ORDER BY id'
+    )
     .all() as Recommendation[]
+  return rows
 }
 
 export function cacheRecommendations(recs: Omit<Recommendation, 'id'>[]): void {
   const generatedAt = new Date().toISOString()
   getDb().prepare('DELETE FROM recommendations_cache').run()
   const stmt = getDb().prepare(
-    'INSERT INTO recommendations_cache (ticker, reasoning, generated_at) VALUES (?, ?, ?)'
+    'INSERT INTO recommendations_cache (ticker, reasoning, confidence, category, generated_at) VALUES (?, ?, ?, ?, ?)'
   )
   const insertMany = getDb().transaction((rows: Omit<Recommendation, 'id'>[]) => {
     for (const row of rows) {
-      stmt.run(row.ticker, row.reasoning, row.generatedAt ?? generatedAt)
+      stmt.run(
+        row.ticker,
+        row.reasoning,
+        row.confidence,
+        row.category,
+        row.generatedAt ?? generatedAt
+      )
     }
   })
   insertMany(recs)
+}
+
+export function isRecommendationsStale(): boolean {
+  const row = getDb()
+    .prepare('SELECT generated_at FROM recommendations_cache ORDER BY id DESC LIMIT 1')
+    .get() as { generated_at: string } | undefined
+  if (!row) return true
+  return new Date(row.generated_at).toDateString() !== new Date().toDateString()
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────

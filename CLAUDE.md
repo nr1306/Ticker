@@ -21,8 +21,8 @@ A lightweight, ambient desktop application for working professionals who activel
 | v0.7.0  | Watchlist                                                      | ✅ Done                                    |
 | v0.8.0  | Smart price alerts + system notifications                      | ✅ Done                                    |
 | v0.9.0  | News Pulse (NewsAPI)                                           | ✅ Done                                    |
-| v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                 |
-| v1.1.0  | AI stock recommendations (GPT-4o)                              | ⏳ Pending                                 |
+| v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⛔ Skipped — users read full articles      |
+| v1.1.0  | AI stock recommendations (GPT-4o)                              | ✅ Done                                    |
 | v1.2.0  | CSV portfolio import                                           | ⏳ Pending                                 |
 | v1.3.0  | Settings + preferences UI                                      | ⏳ Pending                                 |
 | v1.4.0  | Packaging + distribution                                       | ⏳ Pending                                 |

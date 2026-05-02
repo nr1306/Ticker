@@ -5,7 +5,7 @@ config({ path: join(process.cwd(), '.env') })
 import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import log from 'electron-log'
-import { initDb } from '../services/db'
+import { initDb, getSettings, isRecommendationsStale } from '../services/db'
 import { createFloatingWindow } from './floatingWindow'
 import { createSettingsWindow, getSettingsWindow } from './settingsWindow'
 import { createTray } from './tray'
@@ -18,6 +18,7 @@ import { registerSettingsHandlers } from './ipc/settings'
 import { registerTickerHandlers } from './ipc/ticker'
 import { startPricePoller, stopPricePoller } from './pricePoller'
 import { fetchAndCacheNews } from './newsFetcher'
+import { generateAndBroadcastRecommendations } from './recommendationsFetcher'
 
 log.initialize()
 log.info('Ticker starting up')
@@ -39,7 +40,6 @@ app.whenReady().then(async () => {
   registerWatchlistHandlers()
   registerAlertHandlers()
   registerNewsHandlers()
-  registerRecommendationHandlers()
   registerSettingsHandlers()
   registerTickerHandlers()
 
@@ -64,8 +64,13 @@ app.whenReady().then(async () => {
   createTray(floatingWindow)
   startPricePoller(floatingWindow)
   fetchAndCacheNews(floatingWindow)
+  registerRecommendationHandlers(floatingWindow)
 
   ipcMain.handle('news:refresh', () => fetchAndCacheNews(floatingWindow!))
+
+  if (getSettings().recAutoRefreshMorning && isRecommendationsStale()) {
+    generateAndBroadcastRecommendations(floatingWindow)
+  }
 
   nativeTheme.on('updated', () => {
     const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
