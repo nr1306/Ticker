@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('api', {
     subscribe('recommendations:ready', cb),
   onNewsUpdate: (cb: (data: NewsItem[]) => void) => subscribe('news:update', cb),
   openSettings: () => ipcRenderer.invoke('window:openSettings'),
+  openExternal: (url: string) => ipcRenderer.invoke('shell:openExternal', url),
 
   portfolio: {
     getAll: () => ipcRenderer.invoke('portfolio:getAll'),
@@ -55,7 +56,8 @@ contextBridge.exposeInMainWorld('api', {
   news: {
     getAll: () => ipcRenderer.invoke('news:getAll'),
     markRead: (id: number) => ipcRenderer.invoke('news:markRead', id),
-    getSummary: (id: number) => ipcRenderer.invoke('news:getSummary', id)
+    getSummary: (id: number) => ipcRenderer.invoke('news:getSummary', id),
+    refresh: () => ipcRenderer.invoke('news:refresh')
   },
 
   settings: {

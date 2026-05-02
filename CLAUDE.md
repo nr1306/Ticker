@@ -6,26 +6,26 @@ A lightweight, ambient desktop application for working professionals who activel
 
 ---
 
-## Current Version: v0.7.0
+## Current Version: v0.9.0
 
 ### Build Progress
 
-| Version | Feature                                                        | Status                                     |
-| ------- | -------------------------------------------------------------- | ------------------------------------------ |
-| v0.1.0  | Project scaffold — Electron + React + TypeScript + Tailwind v4 | ✅ Done                                    |
-| v0.2.0  | Two-window setup, collapsible widget, settings tab routing     | ✅ Done                                    |
-| v0.3.0  | SQLite schema, full CRUD service, IPC handler layer            | ✅ Done                                    |
-| v0.4.0  | Portfolio management UI with ticker lookup                     | ✅ Done (UI spacing polish pending commit) |
-| v0.5.0  | Live price polling (yahoo-finance2 + pricePoller)              | ✅ Done                                    |
-| v0.6.0  | Live floating widget with prices + % change                    | ✅ Done                                    |
-| v0.7.0  | Watchlist                                                      | ✅ Done                                    |
-| v0.8.0  | Smart price alerts + system notifications                      | ⏳ Pending                                 |
-| v0.9.0  | News Pulse (NewsAPI)                                           | ⏳ Pending                                 |
-| v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                 |
-| v1.1.0  | AI stock recommendations (GPT-4o)                              | ⏳ Pending                                 |
-| v1.2.0  | CSV portfolio import                                           | ⏳ Pending                                 |
-| v1.3.0  | Settings + preferences UI                                      | ⏳ Pending                                 |
-| v1.4.0  | Packaging + distribution                                       | ⏳ Pending                                 |
+| Version | Feature                                                        | Status                                         |
+| ------- | -------------------------------------------------------------- | ---------------------------------------------- |
+| v0.1.0  | Project scaffold — Electron + React + TypeScript + Tailwind v4 | ✅ Done                                        |
+| v0.2.0  | Two-window setup, collapsible widget, settings tab routing     | ✅ Done                                        |
+| v0.3.0  | SQLite schema, full CRUD service, IPC handler layer            | ✅ Done                                        |
+| v0.4.0  | Portfolio management UI with ticker lookup                     | ✅ Done (UI spacing polish pending commit)     |
+| v0.5.0  | Live price polling (yahoo-finance2 + pricePoller)              | ✅ Done                                        |
+| v0.6.0  | Live floating widget with prices + % change                    | ✅ Done                                        |
+| v0.7.0  | Watchlist                                                      | ✅ Done                                        |
+| v0.8.0  | Smart price alerts + system notifications                      | ✅ Done (on feat/alerts branch, pending merge) |
+| v0.9.0  | News Pulse (NewsAPI)                                           | ✅ Done                                        |
+| v1.0.0  | AI news summaries (GPT-4o-mini)                                | ⏳ Pending                                     |
+| v1.1.0  | AI stock recommendations (GPT-4o)                              | ⏳ Pending                                     |
+| v1.2.0  | CSV portfolio import                                           | ⏳ Pending                                     |
+| v1.3.0  | Settings + preferences UI                                      | ⏳ Pending                                     |
+| v1.4.0  | Packaging + distribution                                       | ⏳ Pending                                     |
 
 ---
 
@@ -88,7 +88,7 @@ ticker/
 │   │           └── tabs/
 │   │               ├── Portfolio.tsx   # Full UI: add form, ticker lookup, stocks table
 │   │               ├── Watchlist.tsx   # Full UI: add form, ticker lookup, live prices, target price editing
-│   │               ├── Alerts.tsx      # Placeholder (v0.8.0)
+│   │               ├── Alerts.tsx      # Full UI: add form, active table, history (v0.8.0)
 │   │               ├── News.tsx        # Placeholder (v0.9.0)
 │   │               ├── Recommendations.tsx # Placeholder (v1.1.0)
 │   │               └── SettingsTab.tsx # Placeholder (v1.3.0)
@@ -352,3 +352,25 @@ Rules:
 - If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
 - For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
 - After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
+
+## SPECIAL INSTRUCTION
+
+Do not make any changes until you have 95% confidence in what you need to build. Ask me follow up questions until you reach that confidence.
+
+## Applied Learning
+
+- Validate inputs before execution; bad inputs cause cascading failures.
+- Re-run tasks after fixing inputs; first outputs often incomplete.
+- Avoid redundant explanations; default to concise outputs.
+- Cache repeated results to reduce recomputation and tokens.
+- Prefer structured output over paragraphs for clarity and reuse.
+- Skip steps already completed unless state has changed.
+- Do not retry failing actions without modifying approach.
+- Use deterministic logic for validation instead of LLM reasoning.
+- Break tasks only when necessary; over-decomposition wastes tokens.
+- Avoid regenerating identical content; reuse previous outputs.
+- Validate file paths and dependencies before execution.
+- Limit tool usage; unnecessary calls increase latency and cost.
+- Prefer parallel execution for independent tasks.
+- Eliminate verbose reasoning unless explicitly required.
+- Detect and stop infinite or redundant loops early.

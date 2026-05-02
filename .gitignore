@@ -1,3 +1,4 @@
+.worktrees/
 node_modules/
 out/
 dist/
@@ -6,3 +7,6 @@ dist/
 .DS_Store
 *.tsbuildinfo
 venv/
+graphify-out/cache/            # optional: commit for shared extraction speed, skip to keep repo small
+graphify-out/manifest.json     # mtime-based, invalid after git clone — always gitignore this
+graphify-out/cost.json         # local token tracking, not useful to share

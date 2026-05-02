@@ -17,6 +17,7 @@ export interface WindowApi {
   onRecommendationsReady: (cb: (data: Recommendation[]) => void) => () => void
   onNewsUpdate: (cb: (data: NewsItem[]) => void) => () => void
   openSettings: () => Promise<void>
+  openExternal: (url: string) => Promise<void>
   portfolio: {
     getAll: () => Promise<PortfolioStock[]>
     add: (ticker: string, name: string, quantity: number) => Promise<void>
@@ -42,6 +43,7 @@ export interface WindowApi {
     getAll: () => Promise<NewsItem[]>
     markRead: (id: number) => Promise<void>
     getSummary: (id: number) => Promise<string>
+    refresh: () => Promise<void>
   }
   settings: {
     get: () => Promise<AppSettings>

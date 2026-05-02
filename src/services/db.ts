@@ -94,7 +94,9 @@ function seedDefaults(): void {
     ['widget_position', 'top-right'],
     ['widget_opacity_idle', '0.4'],
     ['news_auto_refresh', '1'],
-    ['rec_auto_refresh_morning', '1']
+    ['rec_auto_refresh_morning', '1'],
+    ['widget_width', '300'],
+    ['widget_height', '500']
   ]
   for (const [key, value] of defaults) {
     insert.run(key, value)
@@ -263,11 +265,18 @@ export function getAlertHistory(): AlertHistoryEntry[] {
 type NewsCacheInput = Omit<NewsItem, 'id' | 'summary' | 'read'>
 
 export function getCachedNews(): NewsItem[] {
-  return getDb()
+  const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+  const rows = getDb()
     .prepare(
-      'SELECT id, ticker, headline, source, url, published_at, summary, read FROM news_cache ORDER BY published_at DESC LIMIT 200'
+      'SELECT id, ticker, headline, source, url, published_at AS publishedAt, summary, read FROM news_cache WHERE published_at >= ? ORDER BY published_at DESC LIMIT 200'
     )
-    .all() as NewsItem[]
+    .all(cutoff) as (Omit<NewsItem, 'read'> & { read: number })[]
+  return rows.map((r) => ({ ...r, read: r.read === 1 }))
+}
+
+export function clearNewsBeforeToday(): void {
+  const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+  getDb().prepare('DELETE FROM news_cache WHERE published_at < ?').run(cutoff)
 }
 
 export function cacheNewsItems(items: NewsCacheInput[]): void {
@@ -363,4 +372,21 @@ export function updateSettings(partial: Partial<AppSettings>): void {
     updates.push(['rec_auto_refresh_morning', partial.recAutoRefreshMorning ? '1' : '0'])
 
   updateMany(updates)
+}
+
+export function getWidgetSize(): { width: number; height: number } {
+  const rows = getDb()
+    .prepare("SELECT key, value FROM settings WHERE key IN ('widget_width', 'widget_height')")
+    .all() as { key: string; value: string }[]
+  const map = Object.fromEntries(rows.map((r) => [r.key, r.value]))
+  return {
+    width: Number(map['widget_width'] ?? 300),
+    height: Number(map['widget_height'] ?? 500)
+  }
+}
+
+export function saveWidgetSize(width: number, height: number): void {
+  const stmt = getDb().prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
+  stmt.run('widget_width', String(width))
+  stmt.run('widget_height', String(height))
 }

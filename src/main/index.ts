@@ -1,4 +1,8 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
+import { config } from 'dotenv'
+import { join } from 'path'
+config({ path: join(process.cwd(), '.env') })
+
+import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import log from 'electron-log'
 import { initDb } from '../services/db'
@@ -13,6 +17,7 @@ import { registerRecommendationHandlers } from './ipc/recommendations'
 import { registerSettingsHandlers } from './ipc/settings'
 import { registerTickerHandlers } from './ipc/ticker'
 import { startPricePoller, stopPricePoller } from './pricePoller'
+import { fetchAndCacheNews } from './newsFetcher'
 
 log.initialize()
 log.info('Ticker starting up')
@@ -42,6 +47,8 @@ app.whenReady().then(async () => {
     createSettingsWindow()
   })
 
+  ipcMain.handle('shell:openExternal', (_e, url: string) => shell.openExternal(url))
+
   if (is.dev) {
     try {
       const { default: installExtension, REACT_DEVELOPER_TOOLS } =
@@ -56,6 +63,9 @@ app.whenReady().then(async () => {
   floatingWindow = createFloatingWindow()
   createTray(floatingWindow)
   startPricePoller(floatingWindow)
+  fetchAndCacheNews(floatingWindow)
+
+  ipcMain.handle('news:refresh', () => fetchAndCacheNews(floatingWindow!))
 
   nativeTheme.on('updated', () => {
     const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
