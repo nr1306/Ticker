@@ -22,6 +22,12 @@ export interface WindowApi {
     getAll: () => Promise<PortfolioStock[]>
     add: (ticker: string, name: string, quantity: number) => Promise<void>
     remove: (ticker: string) => Promise<void>
+    parseCsv: () => Promise<{
+      headers: string[]
+      rows: string[][]
+      detectedTicker: string | null
+      detectedQuantity: string | null
+    } | null>
   }
   watchlist: {
     getAll: () => Promise<WatchlistStock[]>

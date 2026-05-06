@@ -1,7 +1,15 @@
 import { useEffect, useState, useRef } from 'react'
 import { usePortfolioStore } from '../stores/portfolioStore'
+import CsvImportModal from './CsvImportModal'
 
 type LookupStatus = 'idle' | 'loading' | 'found' | 'not-found'
+
+interface CsvData {
+  headers: string[]
+  rows: string[][]
+  detectedTicker: string | null
+  detectedQuantity: string | null
+}
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -21,6 +29,9 @@ function formatSignedPercent(value: number): string {
 
 export default function Portfolio() {
   const { stocks, loading, fetch, add, remove } = usePortfolioStore()
+
+  const [csvData, setCsvData] = useState<CsvData | null>(null)
+  const [csvLoading, setCsvLoading] = useState(false)
 
   const [ticker, setTicker] = useState('')
   const [name, setName] = useState('')
@@ -95,14 +106,54 @@ export default function Portfolio() {
     if (e.key === 'Enter') handleAdd()
   }
 
+  const handleImportCsv = async () => {
+    setCsvLoading(true)
+    const data = await window.api.portfolio.parseCsv()
+    setCsvLoading(false)
+    if (data) setCsvData(data)
+  }
+
   return (
     <div className="p-8">
+      {csvData && (
+        <CsvImportModal
+          data={csvData}
+          onClose={() => setCsvData(null)}
+          onImportComplete={() => {
+            setCsvData(null)
+            fetch()
+          }}
+        />
+      )}
+
       {/* Header */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2">Portfolio</h2>
-        <p className="text-sm text-zinc-400 dark:text-zinc-500">
-          Stocks you currently own. Live prices refresh automatically while Ticker is running.
-        </p>
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2">Portfolio</h2>
+          <p className="text-sm text-zinc-400 dark:text-zinc-500">
+            Stocks you currently own. Live prices refresh automatically while Ticker is running.
+          </p>
+        </div>
+        <button
+          onClick={handleImportCsv}
+          disabled={csvLoading}
+          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 hover:text-zinc-800 dark:hover:text-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+            />
+          </svg>
+          {csvLoading ? 'Opening…' : 'Import CSV'}
+        </button>
       </div>
 
       {/* Add stock form */}

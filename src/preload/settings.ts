@@ -28,7 +28,8 @@ contextBridge.exposeInMainWorld('api', {
     getAll: () => ipcRenderer.invoke('portfolio:getAll'),
     add: (ticker: string, name: string, quantity: number) =>
       ipcRenderer.invoke('portfolio:add', ticker, name, quantity),
-    remove: (ticker: string) => ipcRenderer.invoke('portfolio:remove', ticker)
+    remove: (ticker: string) => ipcRenderer.invoke('portfolio:remove', ticker),
+    parseCsv: () => ipcRenderer.invoke('portfolio:parseCsv')
   },
 
   watchlist: {
