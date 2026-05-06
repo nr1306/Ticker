@@ -21,6 +21,8 @@ contextBridge.exposeInMainWorld('api', {
   onRecommendationsReady: (cb: (data: Recommendation[]) => void) =>
     subscribe('recommendations:ready', cb),
   onNewsUpdate: (cb: (data: NewsItem[]) => void) => subscribe('news:update', cb),
+  onSettingsOpacityUpdate: (cb: (opacity: number) => void) =>
+    subscribe('settings:opacityUpdate', cb),
   openSettings: () => ipcRenderer.invoke('window:openSettings'),
 
   portfolio: {

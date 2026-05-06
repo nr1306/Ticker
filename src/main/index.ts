@@ -40,7 +40,6 @@ app.whenReady().then(async () => {
   registerWatchlistHandlers()
   registerAlertHandlers()
   registerNewsHandlers()
-  registerSettingsHandlers()
   registerTickerHandlers()
 
   ipcMain.handle('window:openSettings', () => {
@@ -65,6 +64,7 @@ app.whenReady().then(async () => {
   startPricePoller(floatingWindow)
   fetchAndCacheNews(floatingWindow)
   registerRecommendationHandlers(floatingWindow)
+  registerSettingsHandlers(floatingWindow)
 
   ipcMain.handle('news:refresh', () => fetchAndCacheNews(floatingWindow!))
 

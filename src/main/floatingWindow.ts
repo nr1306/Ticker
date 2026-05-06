@@ -2,10 +2,37 @@ import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import log from 'electron-log'
-import { getWidgetSize, saveWidgetSize } from '../services/db'
+import { getWidgetSize, saveWidgetSize, getSettings } from '../services/db'
+
+function computePosition(
+  position: string,
+  winWidth: number,
+  winHeight: number
+): { x: number; y: number } {
+  const { width: sw, height: sh } = screen.getPrimaryDisplay().workAreaSize
+  const m = 20
+  switch (position) {
+    case 'top-left':
+      return { x: m, y: m }
+    case 'bottom-right':
+      return { x: sw - winWidth - m, y: sh - winHeight - m }
+    case 'bottom-left':
+      return { x: m, y: sh - winHeight - m }
+    default:
+      return { x: sw - winWidth - m, y: m } // top-right
+  }
+}
+
+export function repositionWindow(win: BrowserWindow, position: string): void {
+  if (win.isDestroyed()) return
+  const [w, h] = win.getSize()
+  const { x, y } = computePosition(position, w, h)
+  win.setPosition(x, y)
+}
 
 export function createFloatingWindow(): BrowserWindow {
   const { width: savedW, height: savedH } = getWidgetSize()
+  const { widgetPosition } = getSettings()
 
   const win = new BrowserWindow({
     width: savedW,
@@ -31,8 +58,8 @@ export function createFloatingWindow(): BrowserWindow {
   win.setAlwaysOnTop(true, 'floating')
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
 
-  const { width } = screen.getPrimaryDisplay().workAreaSize
-  win.setPosition(width - savedW - 20, 20)
+  const { x, y } = computePosition(widgetPosition, savedW, savedH)
+  win.setPosition(x, y)
 
   win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)

@@ -16,6 +16,7 @@ export interface WindowApi {
   onAlertTriggered: (cb: (data: { alert: Alert; priceAtTrigger: number }) => void) => () => void
   onRecommendationsReady: (cb: (data: Recommendation[]) => void) => () => void
   onNewsUpdate: (cb: (data: NewsItem[]) => void) => () => void
+  onSettingsOpacityUpdate: (cb: (opacity: number) => void) => () => void
   openSettings: () => Promise<void>
   openExternal: (url: string) => Promise<void>
   portfolio: {

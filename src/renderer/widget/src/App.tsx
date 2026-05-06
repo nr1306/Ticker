@@ -65,6 +65,13 @@ export default function App() {
   const [collapsed, setCollapsed] = useState(false)
   const [portfolio, setPortfolio] = useState<PortfolioStock[]>([])
   const [watchlist, setWatchlist] = useState<WatchlistStock[]>([])
+  const [idleOpacity, setIdleOpacity] = useState(0.4)
+
+  useEffect(() => {
+    window.api.settings.get().then((s) => setIdleOpacity(s.widgetOpacityIdle))
+    const unsubOpacity = window.api.onSettingsOpacityUpdate(setIdleOpacity)
+    return unsubOpacity
+  }, [])
 
   useEffect(() => {
     window.api.portfolio.getAll().then(setPortfolio)
@@ -100,7 +107,7 @@ export default function App() {
 
   return (
     <div
-      style={{ opacity: hovered ? 1 : 0.4 }}
+      style={{ opacity: hovered ? 1 : idleOpacity }}
       className="transition-opacity duration-200 w-full h-screen"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
