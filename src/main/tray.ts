@@ -6,7 +6,7 @@ import log from 'electron-log'
 let tray: Tray | null = null
 
 export function createTray(floatingWindow: BrowserWindow): Tray {
-  const iconPath = join(__dirname, '../../resources/tray-icon.png')
+  const iconPath = join(__dirname, '../../resources/tray-iconTemplate.png')
   let icon = nativeImage.createFromPath(iconPath)
 
   if (icon.isEmpty()) {

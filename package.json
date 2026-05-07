@@ -9,6 +9,9 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:win": "electron-vite build && electron-builder --win",
+    "dist:all": "electron-vite build && electron-builder --mac --win",
     "lint": "eslint src",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
@@ -51,6 +54,7 @@
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "electron": "^41.3.0",
+    "electron-builder": "^26.8.1",
     "electron-devtools-installer": "^4.0.0",
     "electron-vite": "6.0.0-beta.1",
     "eslint": "^10.2.1",
@@ -81,5 +85,56 @@
     "*.{json,md,css,html}": [
       "prettier --write"
     ]
+  },
+  "build": {
+    "appId": "com.neshrochwani.ticker",
+    "productName": "Ticker",
+    "copyright": "Copyright © 2025 neshrochwani",
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**",
+      "node_modules/bindings/**"
+    ],
+    "files": [
+      "out/**",
+      "resources/**",
+      "!resources/README.md",
+      "!**/*.map",
+      "!**/*.d.ts"
+    ],
+    "mac": {
+      "category": "public.app-category.finance",
+      "icon": "resources/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "identity": null
+    },
+    "dmg": {
+      "title": "Ticker",
+      "sign": false
+    },
+    "win": {
+      "icon": "resources/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false
+    }
   }
 }

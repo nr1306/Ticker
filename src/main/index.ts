@@ -1,7 +1,5 @@
 import { config } from 'dotenv'
 import { join } from 'path'
-config({ path: join(process.cwd(), '.env') })
-
 import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import log from 'electron-log'
@@ -26,6 +24,14 @@ log.info('Ticker starting up')
 let floatingWindow: BrowserWindow | null = null
 
 app.whenReady().then(async () => {
+  // Load .env: userData path first (packaged), fall back to cwd (dev)
+  const userDataEnv = join(app.getPath('userData'), '.env')
+  const result = config({ path: userDataEnv })
+  if (result.error) {
+    config() // dev fallback: reads .env from process.cwd()
+  }
+  log.info('Env loaded from:', result.error ? 'cwd' : userDataEnv)
+
   electronApp.setAppUserModelId('com.ticker')
 
   app.on('browser-window-created', (_, window) => {

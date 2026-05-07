@@ -213,6 +213,57 @@ npx electron-rebuild -f -w better-sqlite3
 
 ---
 
+## Packaging & distribution
+
+### Build a distributable
+
+```bash
+# macOS — outputs a .dmg to dist/
+npm run dist:mac
+
+# Windows — must run on a Windows machine (see note below)
+npm run dist:win
+```
+
+Output lands in `dist/`. The macOS build produces two `.dmg` files — one for Intel (x64) and one for Apple Silicon (arm64).
+
+### API keys in the packaged app
+
+The packaged app reads its `.env` from the Electron `userData` directory, not the repo root. After installing, create the file at:
+
+| Platform | Path                                        |
+| -------- | ------------------------------------------- |
+| macOS    | `~/Library/Application Support/ticker/.env` |
+| Windows  | `%APPDATA%\ticker\.env`                     |
+
+File contents:
+
+```bash
+OPENAI_API_KEY=sk-...
+NEWS_API_KEY=...
+```
+
+The app starts without these keys — all non-AI features work. The Recommendations and News tabs stay empty until keys are present.
+
+### Apple Silicon — "damaged app" warning
+
+Unsigned apps on Apple Silicon show _"Ticker is damaged and can't be opened"_ instead of the usual Gatekeeper prompt. Fix it by clearing the quarantine attribute after installation:
+
+```bash
+xattr -cr /Applications/Ticker.app
+```
+
+Then re-open normally.
+
+### Windows cross-compile limitation
+
+`better-sqlite3` is a native module. Building the Windows `.exe` from macOS requires the Windows toolchain and will fail at the native rebuild step. Two options:
+
+- Build on a Windows machine (clone the repo, `npm install`, `npm run dist:win`)
+- Use [GitHub Actions](https://github.com/features/actions) with a `windows-latest` runner
+
+---
+
 ## Contributing
 
 Commit messages are enforced by commitlint (conventional commits, lowercase subject):
