@@ -2,7 +2,13 @@ import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import log from 'electron-log'
-import { getWidgetSize, saveWidgetSize, getSettings } from '../services/db'
+import {
+  getWidgetSize,
+  saveWidgetSize,
+  getWidgetPosition,
+  saveWidgetPosition,
+  getSettings
+} from '../services/db'
 
 function computePosition(
   position: string,
@@ -58,8 +64,21 @@ export function createFloatingWindow(): BrowserWindow {
   win.setAlwaysOnTop(true, 'floating')
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
 
-  const { x, y } = computePosition(widgetPosition, savedW, savedH)
-  win.setPosition(x, y)
+  const { x: savedX, y: savedY } = getWidgetPosition()
+  const { width: sw, height: sh } = screen.getPrimaryDisplay().workAreaSize
+  if (
+    savedX !== null &&
+    savedY !== null &&
+    savedX >= 0 &&
+    savedY >= 0 &&
+    savedX < sw &&
+    savedY < sh
+  ) {
+    win.setPosition(savedX, savedY)
+  } else {
+    const { x, y } = computePosition(widgetPosition, savedW, savedH)
+    win.setPosition(x, y)
+  }
 
   win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -73,6 +92,17 @@ export function createFloatingWindow(): BrowserWindow {
       if (!win.isDestroyed()) {
         const [w, h] = win.getSize()
         saveWidgetSize(w, h)
+      }
+    }, 500)
+  })
+
+  let moveTimer: ReturnType<typeof setTimeout>
+  win.on('move', () => {
+    clearTimeout(moveTimer)
+    moveTimer = setTimeout(() => {
+      if (!win.isDestroyed()) {
+        const [x, y] = win.getPosition()
+        saveWidgetPosition(x, y)
       }
     }, 500)
   })

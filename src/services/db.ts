@@ -450,3 +450,20 @@ export function saveWidgetSize(width: number, height: number): void {
   stmt.run('widget_width', String(width))
   stmt.run('widget_height', String(height))
 }
+
+export function getWidgetPosition(): { x: number | null; y: number | null } {
+  const rows = getDb()
+    .prepare("SELECT key, value FROM settings WHERE key IN ('widget_x', 'widget_y')")
+    .all() as { key: string; value: string }[]
+  const map = Object.fromEntries(rows.map((r) => [r.key, r.value]))
+  return {
+    x: map['widget_x'] !== undefined ? Number(map['widget_x']) : null,
+    y: map['widget_y'] !== undefined ? Number(map['widget_y']) : null
+  }
+}
+
+export function saveWidgetPosition(x: number, y: number): void {
+  const stmt = getDb().prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
+  stmt.run('widget_x', String(Math.round(x)))
+  stmt.run('widget_y', String(Math.round(y)))
+}

@@ -29,7 +29,8 @@ async function fetchSinglePrice(ticker: string): Promise<PriceUpdate | null> {
 
     const meta: YFChartMeta | undefined = data?.chart?.result?.[0]?.meta
     if (!meta?.regularMarketPrice) {
-      log.warn(`stockApi: no price data for ${ticker}`)
+      const reason = data?.chart?.error?.description ?? 'no regularMarketPrice in response'
+      log.warn(`stockApi: no price data for ${ticker} — ${reason}`)
       return null
     }
 
@@ -51,8 +52,9 @@ export async function fetchPrices(tickers: string[]): Promise<PriceUpdate[]> {
   if (tickers.length === 0) return []
 
   const results: (PriceUpdate | null)[] = []
-  for (const ticker of tickers) {
-    results.push(await fetchSinglePrice(ticker))
+  for (let i = 0; i < tickers.length; i++) {
+    if (i > 0) await new Promise((r) => setTimeout(r, 300))
+    results.push(await fetchSinglePrice(tickers[i]))
   }
   return results.filter((r): r is PriceUpdate => r !== null)
 }
