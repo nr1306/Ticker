@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron'
 import log from 'electron-log'
-import { getPortfolio, getWatchlist, getSettings } from '../services/db'
+import { getPortfolio, getWatchlist, getAlerts, getSettings } from '../services/db'
 import type { PriceUpdate } from '../shared/types'
 import { fetchPrices } from '../services/stockApi'
 import { getSettingsWindow } from './settingsWindow'
@@ -38,11 +38,17 @@ function schedulePoll(floatingWindow: BrowserWindow, delayMs: number): void {
 }
 
 async function runPoll(floatingWindow: BrowserWindow): Promise<void> {
-  // Deduplicate tickers across portfolio and watchlist
   const portfolio = getPortfolio()
   const watchlist = getWatchlist()
+  const activeAlertTickers = getAlerts()
+    .filter((a) => a.active)
+    .map((a) => a.ticker)
   const tickers = [
-    ...new Set([...portfolio.map((s) => s.ticker), ...watchlist.map((s) => s.ticker)])
+    ...new Set([
+      ...portfolio.map((s) => s.ticker),
+      ...watchlist.map((s) => s.ticker),
+      ...activeAlertTickers
+    ])
   ]
 
   if (tickers.length === 0) {
