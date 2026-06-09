@@ -8,12 +8,16 @@ release/
 .DS_Store
 *.tsbuildinfo
 venv/
-graphify-out/cache/
-graphify-out/manifest.json
-graphify-out/cost.json
+graphify-out/
+.graphifyignore
+. graphifyignore
+.claude/
 
 # internal dev artifacts
 CLAUDE.md
 DEPENDENCIES.md
 docs/
 *.csv
+.husky/
+.commitlintrc.json
+.release-it.json
