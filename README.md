@@ -121,8 +121,8 @@ npm run preview      # Preview the production build
 npm run lint         # ESLint
 npm run typecheck    # tsc --noEmit (both main and renderer configs)
 npm run test         # Vitest unit tests
-npm run commit       # Commitizen interactive commit prompt
-npm run release      # release-it — bumps version, generates CHANGELOG, tags
+npm run dist:mac     # Package for macOS → dist/
+npm run dist:win     # Package for Windows → dist/
 ```
 
 ---
@@ -261,20 +261,6 @@ Then re-open normally.
 
 - Build on a Windows machine (clone the repo, `npm install`, `npm run dist:win`)
 - Use [GitHub Actions](https://github.com/features/actions) with a `windows-latest` runner
-
----
-
-## Contributing
-
-Commit messages are enforced by commitlint (conventional commits, lowercase subject):
-
-```
-feat(alerts): add sms notification channel
-fix(widget): prevent flicker on rapid hover
-chore(deps): upgrade yahoo-finance2 to 2.14
-```
-
-Use `npm run commit` for an interactive prompt that formats the message correctly.
 
 ---
 
